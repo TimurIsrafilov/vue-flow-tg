@@ -25,22 +25,31 @@ async function layoutGraph(newDirection) {
 }
 
 const isHidden = ref(false);
-const bossId = ref('');
+const bossIds = ref([]);
 
 const hideNodesByBossId = (id) => {
-  bossId.value = id;
+  if (bossIds.value.includes(id)) {
+    bossIds.value = bossIds.value.filter((bossId) => bossId !== id);
+    console.log(`Removed bossId: ${id}`);
+  } else {
+    bossIds.value = [...bossIds.value, id];
+    console.log(`Added bossId: ${id}`);
+  }
 };
 
-watch([isHidden, bossId], () => {
+watch([isHidden, bossIds], () => {
   nodes.value = nodes.value.map((node) => ({
     ...node,
-    hidden: isHidden.value || node.data.bossId == bossId.value,
+    hidden: isHidden.value || bossIds.value.includes(node.data.bossId),
   }));
   console.log('Updated nodes:', nodes.value);
 
   edges.value = edges.value.map((edge) => ({
     ...edge,
-    hidden: isHidden.value || edge.source == bossId.value,
+    hidden:
+      isHidden.value ||
+      bossIds.value.includes(edge.source) ||
+      bossIds.value.includes(edge.target),
   }));
   console.log('Updated edges:', edges.value);
 });
