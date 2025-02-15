@@ -6,7 +6,7 @@
 
 ## The app can be started at Telegram by the bot direct link:
 
-[t.me/vueflowbot/VueChart/](t.me/vueflowbot/VueChart/)
+[https://t.me/vueflowbot/VueChart/](https://t.me/vueflowbot/VueChart/)
 
 ## The app is deployed at GitHub Pages by the following link:
 
