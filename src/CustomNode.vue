@@ -24,7 +24,7 @@ const toggleVisibility = () => {
   <div class="node">
     <Handle
       type="source"
-      :position="direction === 'TB' ? Position.Bottom : Position.Right"
+      :position="direction === 'BT' ? Position.Top : Position.Left"
     />
     <div class="container">
       <p class="name">{{ name }}</p>
@@ -37,7 +37,7 @@ const toggleVisibility = () => {
     <Handle
       v-if="grade !== 4"
       type="target"
-      :position="direction === 'TB' ? Position.Top : Position.Left"
+      :position="direction === 'BT' ? Position.Bottom : Position.Right"
     />
   </div>
 </template>

@@ -11,7 +11,7 @@ export function useLayout() {
 
   const graph = ref(new dagre.graphlib.Graph());
 
-  const previousDirection = ref('LR');
+  const previousDirection = ref('RL');
 
   function layout(nodes, edges, direction) {
     // we create a new graph instance, in case some nodes/edges were removed, otherwise dagre would act as if they were still there
@@ -21,7 +21,7 @@ export function useLayout() {
 
     dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-    const isHorizontal = direction === 'LR';
+    const isHorizontal = direction === 'RL';
     dagreGraph.setGraph({
       rankdir: direction,
       edgeSep: 50, // Устанавливаем расстояние между рёбрами (по умолчанию 50)
@@ -36,7 +36,7 @@ export function useLayout() {
 
       dagreGraph.setNode(node.id, {
         width: graphNode.dimensions.width || 50,
-        height: graphNode.dimensions.height || 20,
+        height: graphNode.dimensions.height || 50,
       });
     }
 
