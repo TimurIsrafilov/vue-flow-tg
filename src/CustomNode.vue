@@ -7,6 +7,7 @@ const props = defineProps({
   name: String,
   photo: String,
   position: String,
+  grade: String,
   bossId: String,
   direction: String,
   hideNodes: Function,
@@ -22,35 +23,48 @@ const toggleVisibility = () => {
 <template>
   <div class="node">
     <Handle
-      type="target"
-      :position="direction === 'TB' ? Position.Top : Position.Left"
-    />
-    <p>{{ name }}</p>
-    <img :src="photo" />
-    <Handle
       type="source"
       :position="direction === 'TB' ? Position.Bottom : Position.Right"
     />
-    <button class="toggle-btn" @click="toggleVisibility">
-      Скрыть/показать
+    <div class="container">
+      <p class="name">{{ name }}</p>
+      <img :src="photo" />
+    </div>
+
+    <button v-if="grade !== 4" class="toggle-btn" @click="toggleVisibility">
+      Toggle
     </button>
+    <Handle
+      v-if="grade !== 4"
+      type="target"
+      :position="direction === 'TB' ? Position.Top : Position.Left"
+    />
   </div>
 </template>
 
 <style>
 .node {
-  background-color: #1a192b;
-  height: 200px;
-  width: 200px;
+  background-color: grey;
+  height: 80px;
+  width: 150px;
   color: white;
   text-align: center;
-  padding: 10px;
+  padding: 2px;
   border-radius: 10px;
 }
 
+.container {
+  display: flex;
+  gap: 4px;
+}
+
+.name {
+  margin: 0;
+}
+
 .node img {
-  width: 80px;
-  height: 80px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
 }

@@ -48,8 +48,9 @@ watch([isHidden, bossIds], () => {
     ...edge,
     hidden:
       isHidden.value ||
-      bossIds.value.includes(edge.source) ||
-      bossIds.value.includes(edge.target),
+      (bossIds.value.includes(edge.source) &&
+        !bossIds.value.includes(edge.target) &&
+        edge.source === bossIds.value),
   }));
   console.log('Updated edges:', edges.value);
 });

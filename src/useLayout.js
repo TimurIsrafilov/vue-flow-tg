@@ -22,7 +22,11 @@ export function useLayout() {
     dagreGraph.setDefaultEdgeLabel(() => ({}));
 
     const isHorizontal = direction === 'LR';
-    dagreGraph.setGraph({ rankdir: direction });
+    dagreGraph.setGraph({
+      rankdir: direction,
+      edgeSep: 50, // Устанавливаем расстояние между рёбрами (по умолчанию 50)
+      rankSep: 50, // Устанавливаем расстояние между рядами (по умолчанию 50)
+    });
 
     previousDirection.value = direction;
 
@@ -31,8 +35,8 @@ export function useLayout() {
       const graphNode = findNode(node.id);
 
       dagreGraph.setNode(node.id, {
-        width: graphNode.dimensions.width || 150,
-        height: graphNode.dimensions.height || 50,
+        width: graphNode.dimensions.width || 50,
+        height: graphNode.dimensions.height || 20,
       });
     }
 

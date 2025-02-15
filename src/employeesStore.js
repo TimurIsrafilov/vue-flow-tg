@@ -16,6 +16,7 @@ export const useEmployeesStore = defineStore('mainStore', () => {
         name: `${item.first_name} ${item.last_name}`,
         photo: `https://randomuser.me/api/portraits/${item.gender}/${item.id}.jpg`,
         position: item.position,
+        grade: item.grade,
         bossId: `${item.bossId || 'null'}`,
       },
     });
