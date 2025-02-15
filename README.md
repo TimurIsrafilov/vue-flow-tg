@@ -10,7 +10,7 @@
 
 ## The app is deployed at GitHub Pages by the following link:
 
-[https://github.com/TimurIsrafilov/vue-flow-tg/](https://github.com/TimurIsrafilov/vue-flow-tg/)
+[https://timurisrafilov.github.io/vue-flow-tg/](https://timurisrafilov.github.io/vue-flow-tg/)
 
 ## Build commands:
 
