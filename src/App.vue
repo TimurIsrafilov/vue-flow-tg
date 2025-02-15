@@ -6,6 +6,7 @@ import Icon from './Icon.vue';
 import { useEmployeesStore } from './employeesStore';
 import { useLayout } from './useLayout';
 import CustomNode from './CustomNode.vue';
+import '@vue-flow/core/dist/style.css';
 
 const employeesStore = useEmployeesStore();
 const nodes = ref(employeesStore.nodes);
@@ -30,44 +31,48 @@ const bossIds = ref([]);
 const hideNodesByBossId = (id) => {
   if (bossIds.value.includes(id)) {
     bossIds.value = bossIds.value.filter((bossId) => bossId !== id);
-    console.log(`Removed bossId: ${id}`);
   } else {
     bossIds.value = [...bossIds.value, id];
-    console.log(`Added bossId: ${id}`);
   }
 };
 
 watch([isHidden, bossIds], () => {
-  const hiddenNodes = new Set(); // Здесь будем хранить скрытые узлы
+  const hiddenNodes = new Set();
 
-  // Рекурсивная функция скрытия детей
   function hideChildren(parentId) {
     nodes.value.forEach((node) => {
       if (node.data.bossId === parentId && !hiddenNodes.has(node.id)) {
-        hiddenNodes.add(node.id); // Добавляем в скрытые
-        hideChildren(node.id); // Рекурсивно скрываем потомков
+        hiddenNodes.add(node.id);
+        hideChildren(node.id);
       }
     });
   }
 
-  // Запускаем скрытие, но НЕ добавляем сам кликнутый узел в hiddenNodes
   bossIds.value.forEach((bossId) => hideChildren(bossId));
 
-  // Обновляем скрытие нод (кликнутая остаётся видимой)
   nodes.value = nodes.value.map((node) => ({
     ...node,
     hidden: isHidden.value || hiddenNodes.has(node.id),
   }));
 
-  console.log('Updated nodes:', nodes.value);
-
-  // Обновляем скрытие рёбер (если целевой узел скрыт, скрываем и ребро)
   edges.value = edges.value.map((edge) => ({
     ...edge,
-    hidden: isHidden.value || hiddenNodes.has(edge.target), // Скрываем только если target скрыт
+    hidden: isHidden.value || hiddenNodes.has(edge.target),
   }));
 
-  console.log('Updated edges:', edges.value);
+  const visibleNodes = nodes.value.filter((node) => !hiddenNodes.has(node.id));
+  const updatedNodes = layout(visibleNodes, edges.value, direction.value);
+
+  nodes.value = nodes.value.map((node) => {
+    if (hiddenNodes.has(node.id)) {
+      return node;
+    } else {
+      const updatedNode = updatedNodes.find(
+        (updated) => updated.id === node.id
+      );
+      return updatedNode ? updatedNode : node;
+    }
+  });
 });
 </script>
 

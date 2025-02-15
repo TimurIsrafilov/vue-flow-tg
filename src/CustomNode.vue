@@ -7,7 +7,7 @@ const props = defineProps({
   name: String,
   photo: String,
   position: String,
-  grade: String,
+  grade: Number,
   bossId: String,
   direction: String,
   hideNodes: Function,
