@@ -1,40 +1,39 @@
 import { defineStore } from 'pinia';
 import { mockUsers } from './mockUsers';
+import { ref } from 'vue';
 
-export const useEmployeesStore = defineStore('employees', {
-  state: () => ({
-    users: mockUsers,
-  }),
-  actions: {
-    setUsers(users) {
-      this.users = users;
-    },
-  },
-  getters: {
-    nodes: (state) =>
-      state.users.map((user) => ({
-        id: user.id.toString(),
-        position: { x: 0, y: 0 },
-        type: 'custom',
-        data: {
-          id: `${user.id}`,
-          name: `${user.first_name} ${user.last_name}`,
-          photo: `https://randomuser.me/api/portraits/${user.gender}/${user.id}.jpg`,
-          position: user.position,
-          grade: user.grade,
-          bossId: `${user.bossId || 'null'}`,
-        },
-      })),
-    edges: (state) =>
-      state.users.reduce((acc, user) => {
-        if (user.bossId !== null) {
-          acc.push({
-            id: `e${user.bossId}-${user.id}`,
-            source: user.bossId.toString(),
-            target: user.id.toString(),
-          });
-        }
-        return acc;
-      }, []),
-  },
+export const useEmployeesStore = defineStore('mainStore', () => {
+  const initialNodes = [];
+  const initialEdges = [];
+
+  mockUsers.forEach((item) => {
+    initialNodes.push({
+      id: item.id.toString(),
+      position: { x: 0, y: 0 },
+      type: 'custom',
+      data: {
+        id: `${item.id}`,
+        name: `${item.first_name} ${item.last_name}`,
+        photo: `https://randomuser.me/api/portraits/${item.gender}/${item.id}.jpg`,
+        position: item.position,
+        bossId: `${item.bossId || 'null'}`,
+      },
+    });
+
+    if (item.bossId !== null) {
+      initialEdges.push({
+        id: `e${item.id}-${item.bossId}`,
+        source: `${item.id}`,
+        target: `${item.bossId}`,
+      });
+    }
+  });
+
+  const nodes = ref(initialNodes);
+  const edges = ref(initialEdges);
+
+  return {
+    nodes,
+    edges,
+  };
 });

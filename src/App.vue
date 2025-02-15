@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, nextTick, ref } from 'vue';
+import { onMounted, nextTick, ref, watch } from 'vue';
 import { Panel, VueFlow, useVueFlow } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import Icon from './Icon.vue';
@@ -14,15 +14,36 @@ const edges = ref(employeesStore.edges);
 const { layout } = useLayout();
 const { fitView } = useVueFlow();
 
-const direction = ref('LR'); // Добавляем реактивную переменную
+const direction = ref('LR');
 
 async function layoutGraph(newDirection) {
-  direction.value = newDirection; // Обновляем направление
+  direction.value = newDirection;
   nodes.value = layout(nodes.value, edges.value, newDirection);
 
   await nextTick();
   fitView({ includeEdges: true });
 }
+
+const isHidden = ref(false);
+const bossId = ref('');
+
+const hideNodesByBossId = (id) => {
+  bossId.value = id;
+};
+
+watch([isHidden, bossId], () => {
+  nodes.value = nodes.value.map((node) => ({
+    ...node,
+    hidden: isHidden.value || node.data.bossId == bossId.value,
+  }));
+  console.log('Updated nodes:', nodes.value);
+
+  edges.value = edges.value.map((edge) => ({
+    ...edge,
+    hidden: isHidden.value || edge.source == bossId.value,
+  }));
+  console.log('Updated edges:', edges.value);
+});
 </script>
 
 <template>
@@ -33,11 +54,14 @@ async function layoutGraph(newDirection) {
       @nodes-initialized="layoutGraph(direction)"
     >
       <template #node-custom="{ data }">
-        <CustomNode v-bind="data" :direction="direction" />
+        <CustomNode
+          v-bind="data"
+          :direction="direction"
+          :hide-nodes="hideNodesByBossId"
+        />
       </template>
 
       <Background />
-
       <Panel class="process-panel" position="top-right">
         <div class="layout-panel">
           <button title="set horizontal layout" @click="layoutGraph('LR')">

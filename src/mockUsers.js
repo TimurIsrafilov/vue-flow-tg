@@ -6,7 +6,7 @@ export const mockUsers = [
     gender: 'women',
     position: 'CEO',
     grade: 1,
-    bossId: null,
+    bossId: 0,
   },
   {
     id: 12,
