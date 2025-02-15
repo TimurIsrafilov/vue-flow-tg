@@ -38,20 +38,35 @@ const hideNodesByBossId = (id) => {
 };
 
 watch([isHidden, bossIds], () => {
+  const hiddenNodes = new Set(); // Здесь будем хранить скрытые узлы
+
+  // Рекурсивная функция скрытия детей
+  function hideChildren(parentId) {
+    nodes.value.forEach((node) => {
+      if (node.data.bossId === parentId && !hiddenNodes.has(node.id)) {
+        hiddenNodes.add(node.id); // Добавляем в скрытые
+        hideChildren(node.id); // Рекурсивно скрываем потомков
+      }
+    });
+  }
+
+  // Запускаем скрытие, но НЕ добавляем сам кликнутый узел в hiddenNodes
+  bossIds.value.forEach((bossId) => hideChildren(bossId));
+
+  // Обновляем скрытие нод (кликнутая остаётся видимой)
   nodes.value = nodes.value.map((node) => ({
     ...node,
-    hidden: isHidden.value || bossIds.value.includes(node.data.bossId),
+    hidden: isHidden.value || hiddenNodes.has(node.id),
   }));
+
   console.log('Updated nodes:', nodes.value);
 
+  // Обновляем скрытие рёбер (если целевой узел скрыт, скрываем и ребро)
   edges.value = edges.value.map((edge) => ({
     ...edge,
-    hidden:
-      isHidden.value ||
-      (bossIds.value.includes(edge.source) &&
-        !bossIds.value.includes(edge.target) &&
-        edge.source === bossIds.value),
+    hidden: isHidden.value || hiddenNodes.has(edge.target), // Скрываем только если target скрыт
   }));
+
   console.log('Updated edges:', edges.value);
 });
 </script>
